@@ -17,12 +17,9 @@ const sendEmail = (email, subject, html) => {
         html: html
     };
     transporter.sendMail(mailOptions).then((info) => {
-        console.log(info)
         // winston.info(`send-email: ${error.message}`)
     }).catch((error) => {
-        console.log("asdsa")
         winston.error(`send-email: ${error.message}`)
-        // return false;
     })
 }
 

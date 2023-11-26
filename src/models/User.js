@@ -5,41 +5,41 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     username: {
         type: String,
-        require: true,
+        required: true,
     },
     password: {
         type: String,
-        require: true,
+        required: true,
     },
     email: {
         type: String,
-        require: true,
+        required: true,
     },
     fullName: {
         type: String,
-        require: true,
+        required: true,
     },
     cart: {
         items: [
             {
-                productId: {
+                product: {
                     type: Schema.Types.ObjectId,
                     ref: 'Product'
                 },
                 quantity: {
                     type: Number,
-                    require: true
+                    required: true
                 },
             }
         ]
     },
     isAdmin: {
         type: Boolean,
-        require: true,
+        required: true,
     },
     isCounselor: {
         type: Boolean,
-        require: true,
+        required: true,
     }
 })
 

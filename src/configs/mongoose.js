@@ -6,7 +6,7 @@ const connectMongoose = (callback) => {
         callback();
     }).catch((error) => {
         console.log(error)
-        throw "Error connect mongoose"
+        throw "Error connect mongoose";
     })
 }
 

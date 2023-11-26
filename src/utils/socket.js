@@ -1,10 +1,12 @@
 let io;
 
 module.exports = {
-    initIO: () => {
-        // io = reuire()
+    initIO: (server, option) => {
+        io = require('socket.io')(server, option)
     },
-    getIO: {
-
+    getIO: () => {
+        if (io) {
+            return io;
+        }
     }
 }

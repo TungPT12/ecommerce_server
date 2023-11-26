@@ -5,7 +5,8 @@ const getKeyEnvironmentVariable = require('./utils/getKeyEnvironmentVariable');
 const session = require('express-session');
 const productRouter = require('./routers/product');
 const connectMongoose = require('./configs/mongoose');
-const MongoDBStore = require('connect-mongodb-session')(session)
+const MongoDBStore = require('connect-mongodb-session')(session);
+const socketIO = require('./utils/socket');
 
 const store = new MongoDBStore({
     uri: getKeyEnvironmentVariable('MONGODB_URI'),
@@ -38,18 +39,25 @@ const runningServer = () => {
         console.log(`Running on http://localhost:${getKeyEnvironmentVariable('PORT')}`)
     })
 
-    const io = require('socket.io')(server, {
+    socketIO.initIO(server, {
         cors: {
             origin: '*',
-            method: ['GET', 'POST'],
+            method: ['POST', 'GET']
         }
     });
-    io.on('connection', (socket) => {
-        console.log('connected')
-        // socket.on('admin', (data) => {
 
-        // })
+    socketIO.getIO().on('connection', (socket) => {
+        console.log('connected')
     })
+    // const io = require('socket.io')(server, {
+    //     cors: {
+    //         origin: '*',
+    //         method: ['POST', 'GET']
+    //     }
+    // });
+    // io.on('connection', (socket) => {
+    //     console.log('connected')
+    // })
 }
 
 connectMongoose(runningServer);
