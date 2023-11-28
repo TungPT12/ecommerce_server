@@ -3,10 +3,16 @@ const express = require('express');
 const cors = require('cors');
 const getKeyEnvironmentVariable = require('./utils/getKeyEnvironmentVariable');
 const session = require('express-session');
-const productRouter = require('./routers/product');
 const connectMongoose = require('./configs/mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const socketIO = require('./utils/socket');
+const path = require('path');
+const srcPath = require('./utils/path');
+
+// router upload images
+const uploadImageRouter = require('./routers/uploadImage')
+
+const publicPathStatic = express.static(path.join(srcPath, '../public'))
 
 const store = new MongoDBStore({
     uri: getKeyEnvironmentVariable('MONGODB_URI'),
@@ -15,6 +21,7 @@ const store = new MongoDBStore({
 
 const app = express();
 
+app.use(publicPathStatic)
 app.use(express.json());
 app.use(cors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
@@ -31,7 +38,7 @@ app.use(session({
     }
 }))
 
-app.use('/api', productRouter)
+app.use('/api', uploadImageRouter)
 
 
 const runningServer = () => {
@@ -49,15 +56,6 @@ const runningServer = () => {
     socketIO.getIO().on('connection', (socket) => {
         console.log('connected')
     })
-    // const io = require('socket.io')(server, {
-    //     cors: {
-    //         origin: '*',
-    //         method: ['POST', 'GET']
-    //     }
-    // });
-    // io.on('connection', (socket) => {
-    //     console.log('connected')
-    // })
 }
 
 connectMongoose(runningServer);

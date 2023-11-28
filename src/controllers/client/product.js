@@ -1,5 +1,5 @@
-const sendEmail = require('../utils/send-email');
-const winston = require('../utils/winston');
+const sendEmail = require('../../utils/send-email');
+const winston = require('../../utils/winston');
 
 
 exports.getProduct = async (req, res) => {
