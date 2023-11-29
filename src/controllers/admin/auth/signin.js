@@ -1,15 +1,14 @@
 const User = require('../../../models/User')
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
-exports.login = async (req, res) => {
+exports.signin = async (req, res) => {
     try {
         const { email, password } = req.body;
         let user = await User.findOne({
             email: email,
             isDisable: false
-
-        }).select('_id password email fullName cart avatar phoneNumber')
+        })
 
         if (!user) {
             return res.status(401).send(JSON.stringify({
@@ -17,7 +16,6 @@ exports.login = async (req, res) => {
                 success: false
             }))
         }
-
         const isCorrectPassword = bcrypt.compareSync(password, user.password); // true
         if (!isCorrectPassword) {
             return res.status(401).send(JSON.stringify({
@@ -25,26 +23,25 @@ exports.login = async (req, res) => {
                 success: false
             }))
         }
-        const token = jwt.sign({
-            _id: user._id,
-        }, "mysecret", { expiresIn: '1d' });
 
-        req.session.token = token;
+        if (user.isAdmin) {
+            const token = jwt.sign({
+                _id: user._id,
+                isAdmin: user.isAdmin
+            }, "mysecret", { expiresIn: '1d' });
 
-        return res.send(JSON.stringify({
-            id: user._id,
-            email: user.email,
-            fullName: user.fullName,
-            cart: user.cart,
-            avatar: user.avatar,
-            phoneNumber: user.phoneNumber,
-            token: token,
-        }));
+            req.session.token = token;
+            return res.send(JSON.stringify({
+                ...user._doc,
+                token: token
+            }));
+        }
+        return res.status(403).send(JSON.stringify({
+            message: "Not permission!",
+            success: false
+        }))
 
     } catch (error) {
-        if (error.message === 'jwt expired') {
-
-        }
         console.log(error.message);
         return res.status(500).send(JSON.stringify({
             message: "Server Error",
