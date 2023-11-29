@@ -14,7 +14,6 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-    console.log(file);
     if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
         cb(null, true)
     } else {
@@ -24,6 +23,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
-router.post('/upload', upload.array('images'), uploadImageController.uploadImage)
+router.post('/upload-images', upload.array('images'), uploadImageController.uploadImages)
+router.post('/upload-image', upload.single('image'), uploadImageController.uploadImage)
 
 module.exports = router;
