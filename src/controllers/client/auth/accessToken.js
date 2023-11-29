@@ -3,7 +3,7 @@ const User = require('../../../models/User');
 
 exports.isAccessToken = async (req, res) => {
     try {
-        const { token } = req.body;
+        const token = req.session.token;
         if (!token) {
             return res.status(401).send(JSON.stringify({
                 message: 'UnAuthorization'
@@ -11,19 +11,26 @@ exports.isAccessToken = async (req, res) => {
         }
         const decoded = jwt.verify(token, 'mysecret');
         const userId = decoded._id;
-        let user = await User.findOne({ _id: userId }).select('_id username fullName phoneNumber avatar email isAdmin')
-
+        let user = await User.findOne({ _id: userId }).select('_id email fullName cart avatar phoneNumber')
         if (user) {
             return res.send(JSON.stringify({
-                ...user._doc,
-                success: true,
+                id: user._id,
+                email: user.email,
+                fullName: user.fullName,
+                cart: user.cart,
+                avatar: user.avatar,
+                phoneNumber: user.phoneNumber,
+                token: token,
             }));
         }
         return res.status(403).send(JSON.stringify({
             success: false
         }))
     } catch (error) {
-        return res.status(500).send(JSON.stringify({
+        req.session.destroy((error) => {
+            console.log(error)
+        })
+        return res.status(403).send(JSON.stringify({
             message: 'UnAuthorization'
         }));
     }

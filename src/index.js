@@ -12,6 +12,12 @@ const srcPath = require('./utils/path');
 // router upload images
 const uploadImageRouter = require('./routers/uploadImage')
 
+
+// router client
+const signupRouter = require('./routers/client/auth/signup')
+const signinRouter = require('./routers/client/auth/login')
+const checkIsLoginRouter = require('./routers/client/auth/accessToken')
+
 const publicPathStatic = express.static(path.join(srcPath, '../public'))
 
 const store = new MongoDBStore({
@@ -39,6 +45,9 @@ app.use(session({
 }))
 
 app.use('/api', uploadImageRouter)
+app.use('/api', signupRouter)
+app.use('/api', signinRouter)
+app.use('/api', checkIsLoginRouter)
 
 
 const runningServer = () => {

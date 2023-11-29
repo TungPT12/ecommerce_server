@@ -1,30 +1,30 @@
 const User = require("../../../models/User");
+const bcrypt = require('bcryptjs')
 
 exports.signup = async (req, res) => {
     try {
-        const { username, password, fullName, email, phoneNumber, } = req.body;
-        let isDuplicateUserName = await User.findOne({ username: username })
+        const { password, fullName, email, phoneNumber, } = req.body;
         let isDuplicateEmail = await User.findOne({ email: email })
-        if (isDuplicateUserName) {
-            return res.status(400).send(JSON.stringify({
-                message: "Duplicate User Name",
-                success: false
-            }))
-        }
         if (isDuplicateEmail) {
             return res.status(400).send(JSON.stringify({
                 message: "Duplicate Email",
                 success: false
             }))
         }
+
+        const hashPassword = bcrypt.hashSync(password, 12);
+
         const user = new User({
-            username: username,
-            password: password,
+            password: hashPassword,
             fullName: fullName,
             phoneNumber: phoneNumber,
             email: email,
             isAdmin: false,
+            isCounselor: false,
             avatar: 'https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png',
+            cart: {
+                items: []
+            },
             isDisable: false,
         })
         const result = await user.save();

@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    username: {
-        type: String,
-        required: true,
-    },
     password: {
         type: String,
         required: true,
@@ -33,6 +29,14 @@ const userSchema = new Schema({
             }
         ]
     },
+    avatar: {
+        type: String,
+        required: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+    },
     isAdmin: {
         type: Boolean,
         required: true,
@@ -40,7 +44,11 @@ const userSchema = new Schema({
     isCounselor: {
         type: Boolean,
         required: true,
-    }
+    },
+    isDisable: {
+        type: Boolean,
+        required: true,
+    },
 })
 
 
