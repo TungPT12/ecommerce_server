@@ -1,4 +1,5 @@
 const jsonwebtoken = require('jsonwebtoken');
+const getKeyEnvironmentVariable = require('../utils/getKeyEnvironmentVariable');
 
 exports.verifyAdminToken = (req, res, next) => {
     try {
@@ -9,7 +10,7 @@ exports.verifyAdminToken = (req, res, next) => {
                 message: 'UnAuthorization'
             }));
         }
-        const decoded = jsonwebtoken.verify(token, 'mysecret');
+        const decoded = jsonwebtoken.verify(token, getKeyEnvironmentVariable('SECRET_KEY'));
         if (!decoded.isAdmin) {
             return res.status(403).send(JSON.stringify({
                 message: 'Not permission'
