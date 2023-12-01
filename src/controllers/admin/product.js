@@ -1,12 +1,17 @@
 const Product = require('../../models/Product');
+const { validationResult } = require('express-validator');
 
 exports.createProduct = async (req, res) => {
     try {
-        let { name, price, image, short_desc, long_desc, category, quantity } = req.body;
+        let { name, price, images, short_desc, long_desc, category, quantity } = req.body;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json(errors);
+        }
         const product = new Product({
             name: name,
             price: price,
-            image: image,
+            images: images,
             short_desc: short_desc,
             long_desc: long_desc,
             category: category,
@@ -120,29 +125,28 @@ exports.getProducts = async (req, res) => {
 //     }
 // }
 
-// exports.getHotelById = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         if (id) {
-//             const hotel = await Hotel.findById(id)
-//                 .populate('type')
-//                 .populate('area').populate({ path: 'rooms', select: '_id desc maxPeople price roomNumbers title' });
-//             if (hotel) {
-//                 return res.send(JSON.stringify(hotel));
-//             }
-//         }
-//         return res.status(400).send(JSON.stringify({
-//             message: "Cannot delete hotel",
-//             success: false
-//         }))
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).send(JSON.stringify({
-//             message: "Server Error",
-//             success: false
-//         }))
-//     }
-// }
+exports.getProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (id) {
+            const product = await Product.findById(id)
+                .populate('category')
+            if (product) {
+                return res.send(JSON.stringify(product));
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot get product",
+            success: false
+        }))
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
 
 // exports.disableHotel = async (req, res) => {
 //     try {
