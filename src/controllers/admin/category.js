@@ -141,8 +141,8 @@ exports.deleteCategory = async (req, res) => {
             category: id,
         })
         if (products) {
-            return res.status(200).send(JSON.stringify({
-                message: "This category have hotels",
+            return res.status(422).send(JSON.stringify({
+                message: "This category have products!",
                 success: false
             }))
         }
