@@ -1,9 +1,10 @@
+const Order = require('../../models/Order');
 const Product = require('../../models/Product');
 const { validationResult } = require('express-validator');
 
 exports.createProduct = async (req, res) => {
     try {
-        let { name, price, images, short_desc, long_desc, category, quantity } = req.body;
+        const { name, price, images, short_desc, long_desc, category, quantity } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json(errors);
@@ -55,61 +56,6 @@ exports.getProducts = async (req, res) => {
         }))
     }
 }
-// exports.getHotels = async (req, res) => {
-//     try {
-//         let { isDisable, page } = req.query;
-//         if (page) {
-//             page = parseInt(page)
-//         }
-//         let hotels = [];
-//         if (isDisable) {
-//             if (isDisable === 'true') {
-//                 isDisable = true;
-//             } else {
-//                 isDisable = false;
-//             }
-//             hotels = await Hotel.find({ isDisable: isDisable }).select('_id type area name title isDisable').populate({ path: 'type', select: '-_id name' }).populate({ path: 'area', select: '-_id name' })
-//         } else {
-//             hotels = await Hotel.find().select('_id area name title type isDisable').populate({ path: 'type', select: '-_id name' }).populate({ path: 'area', select: '-_id name' })
-//         }
-//         // if (isDisable) {
-//         //     if (isDisable === 'true') {
-//         //         isDisable = true;
-//         //     } else {
-//         //         isDisable = false;
-//         //     }
-//         //     hotels = await Hotel.find({ isDisable: isDisable }).select('_id type area name title isDisable').populate({ path: 'type', select: '-_id name' }).populate({ path: 'area', select: '-_id name' })
-//         // } else {
-//         //     hotels = await Hotel.find().select('_id area name title type isDisable').populate({ path: 'type', select: '-_id name' }).populate({ path: 'area', select: '-_id name' })
-//         // }
-//         if (hotels.length === 0) {
-//             return res.send(JSON.stringify({
-//                 page: 0,
-//                 results: [],
-//                 pageSize: 0,
-//             }))
-//         }
-//         const total_pages = Math.ceil(hotels.length / resultPerPage);
-//         if (page > total_pages) {
-//             return res.send(JSON.stringify({
-//                 errors: `page must be less than or equal to ${total_pages}`,
-//                 success: false
-//             }));
-//         }
-//         const results = paging(hotels, resultPerPage, page)
-//         return res.send(JSON.stringify({
-//             page: page ? page : 1,
-//             results: results,
-//             total_pages: total_pages
-//         }))
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).send(JSON.stringify({
-//             message: "Server Error",
-//             success: false
-//         }))
-//     }
-// }
 
 // exports.getEnableHotels = async (req, res) => {
 //     try {
@@ -194,118 +140,110 @@ exports.getProductById = async (req, res) => {
 //     }
 // }
 
-// exports.updateHotelById = async (req, res) => {
-//     try {
-//         const { id, name, type, area, address, distance, photos, desc, title, featured } = req.body;
+exports.updateProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, price, images, short_desc, long_desc, quantity } = req.body;
+        if (!id) {
+            return res.status(400).send(JSON.stringify({
+                message: "Not found id params!",
+                success: false
+            }));
+        }
+        const product = await Product.findById(id);
 
-//         if (!id) {
-//             return res.status(400).send(JSON.stringify({
-//                 message: "Not found id params!",
-//                 success: false
-//             }));
-//         }
-//         const hotel = await Hotel.findById(id);
+        if (!product) {
+            return res.status(404).send(JSON.stringify({
+                message: "Not found product",
+                success: false
+            }));
+        }
 
-//         if (!hotel) {
-//             return res.status(404).send(JSON.stringify({
-//                 message: "Not found hotel",
-//                 success: false
-//             }));
-//         }
+        product.name = name;
+        product.price = price;
+        product.images = images;
+        product.short_desc = short_desc;
+        product.long_desc = long_desc;
+        product.quantity = quantity;
 
-//         hotel.name = name;
-//         hotel.type = type;
-//         hotel.area = area;
-//         hotel.address = address;
-//         hotel.distance = distance;
-//         hotel.photos = photos;
-//         hotel.desc = desc;
-//         hotel.title = title;
-//         hotel.featured = featured;
+        const productUpdated = await product.save();
+        if (productUpdated) {
+            return res.json(productUpdated);
+        }
 
-//         const hotelUpdated = await hotel.save();
-//         console.log(hotelUpdated)
-//         if (hotelUpdated) {
-//             return res.json(hotelUpdated);
-//         }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot update product!",
+            success: false
+        }));
 
-//         return res.status(400).send(JSON.stringify({
-//             message: "Cannot update hotel!",
-//             success: false
-//         }));
+    } catch (error) {
+        if (error.message.includes("Cast to ObjectId failed")) {
+            return res.status(404).send(JSON.stringify({
+                message: "Not Found Area",
+                success: false
+            }))
+        }
+        console.log(error.message);
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
 
-//     } catch (error) {
-//         if (error.message.includes("Cast to ObjectId failed")) {
-//             return res.status(404).send(JSON.stringify({
-//                 message: "Not Found Area",
-//                 success: false
-//             }))
-//         }
-//         console.log(error.message);
-//         return res.status(500).send(JSON.stringify({
-//             message: "Server Error",
-//             success: false
-//         }))
-//     }
-// }
+exports.deleteProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            return res.status(404).send(JSON.stringify({
+                message: "Not found id params!",
+                success: false
+            }));
+        }
+        const orders = await Order.find({
+            product: id
+        })
 
-// exports.deleteHotelById = async (req, res) => {
-//     try {
-//         const { id } = req.params;
+        if (orders.length > 0) {
+            return res.status(422).send(JSON.stringify({
+                message: "This product have orders cannot delete!",
+                success: false
+            }));
+        }
 
-//         if (!id) {
-//             return res.status(400).send(JSON.stringify({
-//                 message: "Not found id params!",
-//                 success: false
-//             }));
-//         }
+        const product = await Product.findById({
+            _id: id
+        })
 
-//         const transactions = await Transaction.find({
-//             hotelId: id
-//         })
+        if (!product) {
+            return res.status(400).send(JSON.stringify({
+                message: "Product Not Found!",
+                success: false
+            }));
+        }
 
-//         if (transactions.length > 0) {
-//             return res.status(400).send(JSON.stringify({
-//                 message: "This hotel have transactions cannot delete!",
-//                 success: false
-//             }));
-//         }
+        const productDeleted = await Product.deleteOne({ _id: id });
 
-//         const deletedRooms = await Room.deleteMany({
-//             hotelID: id
-//         })
+        if (productDeleted.deletedCount <= 0) {
+            return res.status(400).send(JSON.stringify({
+                message: "Something went wrong when delete product!",
+                success: false
+            }));
+        }
 
-//         if (!deletedRooms) {
-//             return res.status(400).send(JSON.stringify({
-//                 message: "Something went wrong!",
-//                 success: false
-//             }));
-//         }
+        return res.sendStatus(200)
 
-//         const deletedHotel = await Hotel.deleteOne({
-//             _id: id
-//         });
-
-//         if (deletedHotel.deletedCount <= 0) {
-//             return res.status(400).send(JSON.stringify({
-//                 message: "Something went wrong when delete hotels!",
-//                 success: false
-//             }));
-//         }
-
-//         return res.sendStatus(200)
-
-//     } catch (error) {
-//         if (error.message.includes("Cast to ObjectId failed")) {
-//             return res.status(404).send(JSON.stringify({
-//                 message: "Not Found Area",
-//                 success: false
-//             }))
-//         }
-//         console.log(error.message);
-//         return res.status(500).send(JSON.stringify({
-//             message: "Server Error",
-//             success: false
-//         }))
-//     }
-// }
+    } catch (error) {
+        if (error.message.includes("Cast to ObjectId failed")) {
+            return res.status(404).send(JSON.stringify({
+                message: "Not Found Area",
+                success: false
+            }))
+        }
+        console.log(error.message);
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
