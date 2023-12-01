@@ -15,9 +15,9 @@ const uploadImageRouter = require('./routers/uploadImage')
 // router admin
 const signinRouterAdmin = require('./routers/admin/auth/signin')
 const checkIsLoginRouterAdmin = require('./routers/admin/auth/isLogin')
-// const signinRouter = require('./routers/client/auth/login')
 const categoryRouterAdmin = require('./routers/admin/category');
 const productRouterAdmin = require('./routers/admin/product');
+const userRouterAdmin = require('./routers/admin/user');
 
 // router client
 const signupRouter = require('./routers/client/auth/signup')
@@ -59,6 +59,7 @@ app.use('/api/admin', signinRouterAdmin)
 app.use('/api/admin', checkIsLoginRouterAdmin)
 app.use('/api/admin', categoryRouterAdmin)
 app.use('/api/admin', productRouterAdmin)
+app.use('/api/admin', userRouterAdmin)
 
 app.use('/api', signupRouter)
 app.use('/api', signinRouter)
