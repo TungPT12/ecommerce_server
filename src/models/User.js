@@ -26,8 +26,13 @@ const userSchema = new Schema({
                     type: Number,
                     required: true
                 },
+                _id: false
             }
-        ]
+        ],
+        totalQuantity: {
+            type: Number,
+            required: true
+        },
     },
     avatar: {
         type: String,
