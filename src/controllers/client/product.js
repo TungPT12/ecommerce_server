@@ -18,7 +18,9 @@ exports.getProducts = async (req, res) => {
 
 exports.getTopTrendingProducts = async (req, res) => {
     try {
-        const products = await Product.find()
+        const products = await Product.find({
+            quantity: { $gt: 0 }
+        })
         if (products.length < 8) {
             return res.json({
                 results: products,
@@ -38,6 +40,56 @@ exports.getTopTrendingProducts = async (req, res) => {
             results: topProducts,
         })
     } catch (error) {
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
+exports.getProductById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (id) {
+            const product = await Product.findById(id)
+                .populate('category')
+            if (product) {
+                return res.send(JSON.stringify(product));
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot get product",
+            success: false
+        }))
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
+exports.getProductByCategoryId = async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+        if (categoryId) {
+            const products = await Product.find({
+                category: categoryId,
+                quantity: { $gt: 0 }
+            })
+            if (products) {
+                return res.send(JSON.stringify({
+                    results: products,
+                }));
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot get products by category id!",
+            success: false
+        }))
+    } catch (error) {
+        console.log(error);
         return res.status(500).send(JSON.stringify({
             message: "Server Error",
             success: false
