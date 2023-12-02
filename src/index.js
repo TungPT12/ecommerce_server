@@ -23,6 +23,8 @@ const userRouterAdmin = require('./routers/admin/user');
 const signupRouter = require('./routers/client/auth/signup')
 const signinRouter = require('./routers/client/auth/login')
 const checkIsLoginRouter = require('./routers/client/auth/accessToken')
+const productRouter = require('./routers/client/product')
+const categoryRouter = require('./routers/client/category');
 
 const publicPathStatic = express.static(path.join(srcPath, '../public'))
 
@@ -61,9 +63,12 @@ app.use('/api/admin', categoryRouterAdmin)
 app.use('/api/admin', productRouterAdmin)
 app.use('/api/admin', userRouterAdmin)
 
+// client
 app.use('/api', signupRouter)
 app.use('/api', signinRouter)
 app.use('/api', checkIsLoginRouter)
+app.use('/api', productRouter)
+app.use('/api', categoryRouter)
 
 
 const runningServer = () => {
