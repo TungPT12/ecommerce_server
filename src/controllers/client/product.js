@@ -1,20 +1,22 @@
 const Product = require('../../models/Product');
 const sendEmail = require('../../utils/send-email');
 const winston = require('../../utils/winston');
+const paging = require('../../utils/paging');
+const resultPerPage = 8;
 
 
-exports.getProducts = async (req, res) => {
-    try {
-        sendEmail('boypham12042000@gmail.com', `Tung's Store`, '<h1>Thanks buy product from our store</h1>')
-        winston.log({
-            level: 'info',
-            message: 'Hello distributed log files!'
-        });
-        res.json('sadas')
-    } catch (error) {
-        winston.warn('error')
-    }
-}
+// exports.getProducts = async (req, res) => {
+//     try {
+//         sendEmail('boypham12042000@gmail.com', `Tung's Store`, '<h1>Thanks buy product from our store</h1>')
+//         winston.log({
+//             level: 'info',
+//             message: 'Hello distributed log files!'
+//         });
+//         res.json('sadas')
+//     } catch (error) {
+//         winston.warn('error')
+//     }
+// }
 
 exports.getTopTrendingProducts = async (req, res) => {
     try {
@@ -90,6 +92,48 @@ exports.getProductByCategoryId = async (req, res) => {
         }))
     } catch (error) {
         console.log(error);
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
+exports.getProducts = async (req, res) => {
+    try {
+        let { page } = req.query;
+        const products = await Product.find({
+            quantity: { $gt: 0 }
+        })
+        if (page) {
+            page = parseInt(page)
+            if (products.length === 0) {
+                return res.send(JSON.stringify({
+                    page: 0,
+                    results: [],
+                    pageSize: 0,
+                }))
+            }
+            const total_pages = Math.ceil(products.length / resultPerPage);
+            if (page > total_pages) {
+                return res.send(JSON.stringify({
+                    errors: `page must be less than or equal to ${total_pages}`,
+                    success: false
+                }));
+            }
+
+            const results = paging(products, resultPerPage, page)
+            return res.send(JSON.stringify({
+                page: page ? page : 1,
+                results: results,
+                total_pages: total_pages
+            }))
+        }
+        return res.json({
+            results: products,
+        })
+    } catch (error) {
+        console.log(error.message)
         return res.status(500).send(JSON.stringify({
             message: "Server Error",
             success: false
