@@ -2,6 +2,7 @@ const Product = require('../../models/Product');
 const sendEmail = require('../../utils/send-email');
 const winston = require('../../utils/winston');
 const paging = require('../../utils/paging');
+const { searchProductByCategoryId, searchProductByName } = require('../../utils/searchProduct');
 const resultPerPage = 8;
 
 
@@ -101,20 +102,30 @@ exports.getProductByCategoryId = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
     try {
-        let { page } = req.query;
+        let { page, categoryId, name } = req.query;
         const products = await Product.find({
             quantity: { $gt: 0 }
         })
+
+        let productFiltered = products;
+
+        if (categoryId) {
+            productFiltered = searchProductByCategoryId(productFiltered, categoryId)
+        }
+
+        if (name) {
+            productFiltered = searchProductByName(productFiltered, name)
+        }
         if (page) {
             page = parseInt(page)
-            if (products.length === 0) {
+            if (productFiltered.length === 0) {
                 return res.send(JSON.stringify({
                     page: 0,
                     results: [],
                     pageSize: 0,
                 }))
             }
-            const total_pages = Math.ceil(products.length / resultPerPage);
+            const total_pages = Math.ceil(productFiltered.length / resultPerPage);
             if (page > total_pages) {
                 return res.send(JSON.stringify({
                     errors: `page must be less than or equal to ${total_pages}`,
@@ -122,7 +133,7 @@ exports.getProducts = async (req, res) => {
                 }));
             }
 
-            const results = paging(products, resultPerPage, page)
+            const results = paging(productFiltered, resultPerPage, page)
             return res.send(JSON.stringify({
                 page: page ? page : 1,
                 results: results,
@@ -130,7 +141,7 @@ exports.getProducts = async (req, res) => {
             }))
         }
         return res.json({
-            results: products,
+            results: productFiltered,
         })
     } catch (error) {
         console.log(error.message)
