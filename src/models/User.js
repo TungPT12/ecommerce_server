@@ -80,7 +80,7 @@ userSchema.methods.addToCart = async function (productId, quantity) {
     return this.cart
 }
 
-userSchema.methods.deleteProductInCart = async function (productId, quantity) {
+userSchema.methods.deleteProductInCart = async function (productId) {
     let cartItems = this.cart.items;
 
     // timf kiem vị trí món hàng
@@ -88,12 +88,28 @@ userSchema.methods.deleteProductInCart = async function (productId, quantity) {
         return item.product.toString() === productId;
     });
 
-    const quantityItem = cartItems[itemPosition];
+    const quantityItem = cartItems[itemPosition].quantity;
     cartItems.splice(itemPosition, 1)
 
     this.cart.totalQuantity = this.cart.totalQuantity - quantityItem;
     this.cart.items = cartItems;
     user = await this.save();
+    return this.cart
+}
+
+userSchema.methods.decreaseProductInCart = async function (productId) {
+    let cartItems = this.cart.items;
+
+    // timf kiem vị trí món hàng
+    const itemPosition = cartItems.findIndex((item) => {
+        return item.product.toString() === productId;
+    });
+    if (cartItems[itemPosition].quantity > 1) {
+        cartItems[itemPosition].quantity = cartItems[itemPosition].quantity - 1;
+        this.cart.totalQuantity = this.cart.totalQuantity - 1;
+        this.cart.items = cartItems;
+        user = await this.save();
+    }
     return this.cart
 }
 

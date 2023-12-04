@@ -55,3 +55,54 @@ exports.addProductToCart = async (req, res) => {
         }))
     }
 }
+
+exports.deleteProductInCart = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const user = await User.findById(req.userId);
+        if (user) {
+            const cart = await user.deleteProductInCart(productId)
+            if (cart) {
+                return res.send(JSON.stringify({
+                    cart: cart,
+                }))
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot delete product in cart!",
+            success: false
+        }))
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
+exports.decreaseProductInCart = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const user = await User.findById(req.userId);
+        if (user) {
+            const cart = await user.decreaseProductInCart(productId)
+            if (cart) {
+                return res.send(JSON.stringify({
+                    cart: cart,
+                }))
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot delete product in cart!",
+            success: false
+        }))
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
