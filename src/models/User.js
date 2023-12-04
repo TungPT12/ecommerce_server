@@ -70,13 +70,30 @@ userSchema.methods.addToCart = async function (productId, quantity) {
         // khoong tim thấy trong giỏ hàng
         cartItems.push({
             product: productId,
-            quantity: 1
+            quantity: quantity
         })
     }
     this.cart.totalQuantity = this.cart.totalQuantity + quantity;
     this.cart.items = cartItems;
     user = await this.save();
     const items = user.cart.items;
+    return this.cart
+}
+
+userSchema.methods.deleteProductInCart = async function (productId, quantity) {
+    let cartItems = this.cart.items;
+
+    // timf kiem vị trí món hàng
+    const itemPosition = cartItems.findIndex((item) => {
+        return item.product.toString() === productId;
+    });
+
+    const quantityItem = cartItems[itemPosition];
+    cartItems.splice(itemPosition, 1)
+
+    this.cart.totalQuantity = this.cart.totalQuantity - quantityItem;
+    this.cart.items = cartItems;
+    user = await this.save();
     return this.cart
 }
 

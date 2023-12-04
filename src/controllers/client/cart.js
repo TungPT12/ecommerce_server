@@ -1,3 +1,4 @@
+const Product = require("../../models/Product");
 const User = require("../../models/User");
 
 exports.getCart = async (req, res) => {
@@ -26,6 +27,13 @@ exports.getCart = async (req, res) => {
 exports.addProductToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).send(JSON.stringify({
+                message: "Product Not Found!",
+                success: false
+            }))
+        }
         const user = await User.findById(req.userId);
         if (user) {
             const cart = await user.addToCart(productId, quantity)
