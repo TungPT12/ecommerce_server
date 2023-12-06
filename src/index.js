@@ -20,9 +20,7 @@ const productRouterAdmin = require('./routers/admin/product');
 const userRouterAdmin = require('./routers/admin/user');
 
 // router client
-const signupRouter = require('./routers/client/auth/signup')
-const signinRouter = require('./routers/client/auth/login')
-const checkIsLoginRouter = require('./routers/client/auth/accessToken')
+const authnRouter = require('./routers/client/authn')
 const productRouter = require('./routers/client/product')
 const categoryRouter = require('./routers/client/category');
 const cartRouter = require('./routers/client/cart');
@@ -66,9 +64,7 @@ app.use('/api/admin', productRouterAdmin)
 app.use('/api/admin', userRouterAdmin)
 
 // client
-app.use('/api', signupRouter)
-app.use('/api', signinRouter)
-app.use('/api', checkIsLoginRouter)
+app.use('/api', authnRouter)
 app.use('/api', productRouter)
 app.use('/api', categoryRouter)
 app.use('/api', cartRouter)
