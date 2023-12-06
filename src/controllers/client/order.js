@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
                 ${item.product.name}
             </div>
             <div>
-                <img src="${item.product.images[0].includes("http") ? item.product.images[0] : (getKeyEnvironmentVariable('BASE_URL') + item.product.images[0])}" alt="asd"/>
+                <img src="${item.product.images[0].includes("http") ? item.product.images[0] : (getKeyEnvironmentVariable('BASE_URL') + "/" + item.product.images[0])}" alt="asd"/>
             </div>
             <div>
                 ${item.product.price}
