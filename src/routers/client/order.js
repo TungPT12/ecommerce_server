@@ -4,5 +4,6 @@ const { verifyUserToken } = require('../../verifyToken/verifyUserToken');
 const router = express.Router();
 
 router.post('/checkout', verifyUserToken, orderController.createOrder)
+router.get('/orders', verifyUserToken, orderController.getOrders)
 
 module.exports = router

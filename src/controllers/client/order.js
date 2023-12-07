@@ -117,3 +117,37 @@ exports.createOrder = async (req, res) => {
         }))
     }
 }
+
+exports.getOrders = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).send(JSON.stringify({
+                message: "Not Found User!",
+                success: false
+            }))
+        }
+        const orders = await Order.find();
+        return res.send(JSON.stringify({
+            results: orders
+        }))
+
+        // return res.status(400).send(JSON.stringify({
+        //     message: "Cannot order!",
+        //     success: false
+        // }))
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
+
+
