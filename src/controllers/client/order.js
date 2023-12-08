@@ -69,7 +69,7 @@ exports.createOrder = async (req, res) => {
                         </div>
                         <div style="color: #fff;margin:2rem 0rem;">
                             <h1 style="color: #fff;margin: 0;">Tổng Thanh Toán</h1>
-                            h1 style="color: #fff;margin: 0;">${formatPrice(totalPrice.toString())} VND</h1>
+                            <h1 style="color: #fff;margin: 0;">${formatPrice(totalPrice.toString())} VND</h1>
                         </div>
                         <h1 style="color: #fff;">Cảm ơn bạn !</h1>
                     </div>
@@ -84,9 +84,10 @@ exports.createOrder = async (req, res) => {
             items: items,
             address: address,
             totalPrice: totalPrice,
-            delivery: 'Wating for progress',
-            status: 'Wating for pay',
-            items: itemsForOrder
+            delivery: 'waiting',
+            status: false,
+            items: itemsForOrder,
+            create_at: new Date(),
         })
         const user = await User.findById(userId);
         const orderCreated = await order.save();
@@ -121,9 +122,6 @@ exports.createOrder = async (req, res) => {
 exports.getOrders = async (req, res) => {
     try {
         const userId = req.userId;
-
-
-
         const user = await User.findById(userId);
         if (!user) {
             return res.status(400).send(JSON.stringify({
@@ -135,11 +133,6 @@ exports.getOrders = async (req, res) => {
         return res.send(JSON.stringify({
             results: orders
         }))
-
-        // return res.status(400).send(JSON.stringify({
-        //     message: "Cannot order!",
-        //     success: false
-        // }))
     } catch (error) {
         console.log(error.message)
         return res.status(500).send(JSON.stringify({
@@ -178,6 +171,5 @@ exports.getOrderDetail = async (req, res) => {
         }))
     }
 }
-
 
 

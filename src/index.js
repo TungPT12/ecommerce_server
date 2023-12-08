@@ -13,11 +13,11 @@ const srcPath = require('./utils/path');
 const uploadImageRouter = require('./routers/uploadImage')
 
 // router admin
-const signinRouterAdmin = require('./routers/admin/auth/signin')
-const checkIsLoginRouterAdmin = require('./routers/admin/auth/isLogin')
+const authnRouterAdmin = require('./routers/admin/authn')
 const categoryRouterAdmin = require('./routers/admin/category');
 const productRouterAdmin = require('./routers/admin/product');
 const userRouterAdmin = require('./routers/admin/user');
+const orderRouterAdmin = require('./routers/admin/order');
 
 // router client
 const authnRouter = require('./routers/client/authn')
@@ -57,11 +57,11 @@ app.use(session({
 app.use('/api', uploadImageRouter)
 
 // admin api
-app.use('/api/admin', signinRouterAdmin)
-app.use('/api/admin', checkIsLoginRouterAdmin)
+app.use('/api/admin', authnRouterAdmin)
 app.use('/api/admin', categoryRouterAdmin)
 app.use('/api/admin', productRouterAdmin)
 app.use('/api/admin', userRouterAdmin)
+app.use('/api/admin', orderRouterAdmin)
 
 // client
 app.use('/api', authnRouter)

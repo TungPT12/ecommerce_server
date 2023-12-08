@@ -28,7 +28,7 @@ const orderSchema = new Schema({
         required: true,
     },
     status: {
-        type: String,
+        type: Boolean,
         required: true,
     },
     items: [
@@ -48,7 +48,11 @@ const orderSchema = new Schema({
             },
             _id: false
         }
-    ]
+    ],
+    create_at: {
+        type: Date,
+        required: true,
+    }
 })
 
 

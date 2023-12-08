@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/User');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const getKeyEnvironmentVariable = require('../../utils/getKeyEnvironmentVariable');
 
 exports.signin = async (req, res) => {
     try {
@@ -27,7 +28,7 @@ exports.signin = async (req, res) => {
         }
         const token = jwt.sign({
             _id: user._id,
-        }, "mysecret", { expiresIn: '1d' });
+        }, getKeyEnvironmentVariable('SECRET_KEY'), { expiresIn: '1d' });
 
         req.session.token = token;
 
@@ -104,7 +105,7 @@ exports.isAccessToken = async (req, res) => {
                 message: 'UnAuthorization'
             }));
         }
-        const decoded = jwt.verify(token, 'mysecret');
+        const decoded = jwt.verify(token, getKeyEnvironmentVariable('SECRET_KEY'));
         const userId = decoded._id;
         let user = await User.findOne({ _id: userId }).select('_id email fullName cart avatar phoneNumber')
         if (user) {
