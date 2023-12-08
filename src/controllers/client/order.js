@@ -149,5 +149,35 @@ exports.getOrders = async (req, res) => {
     }
 }
 
+exports.getOrderDetail = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { id } = req.params;
+        if (!id) {
+            return res.status(404).send(JSON.stringify({
+                message: "Not Found Id Params!",
+                success: false
+            }))
+        }
+        const order = await Order.findOne({
+            user: userId,
+            _id: id
+        }).populate('items.product');
+        if (!order) {
+            return res.status(400).send(JSON.stringify({
+                message: "Not Found Order!",
+                success: false
+            }))
+        }
+        return res.send(JSON.stringify(order))
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false
+        }))
+    }
+}
+
 
 
