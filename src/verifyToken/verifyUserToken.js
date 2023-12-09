@@ -1,4 +1,5 @@
 const jsonwebtoken = require('jsonwebtoken');
+const getKeyEnvironmentVariable = require('../utils/getKeyEnvironmentVariable');
 
 exports.verifyUserToken = (req, res, next) => {
     try {
@@ -9,7 +10,7 @@ exports.verifyUserToken = (req, res, next) => {
                 message: 'UnAuthorization'
             }));
         }
-        const decoded = jsonwebtoken.verify(token, 'mysecret');
+        const decoded = jsonwebtoken.verify(token, getKeyEnvironmentVariable('SECRET_KEY'));
         req.userId = decoded._id;
         next();
     } catch (error) {

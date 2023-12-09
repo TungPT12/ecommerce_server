@@ -1,7 +1,4 @@
 const User = require('../../models/User');
-const paging = require('../../utils/paging')
-
-const resultPerPage = 8;
 
 exports.createUser = async (req, res) => {
     try {
@@ -48,40 +45,6 @@ exports.getUsers = async (req, res) => {
         }))
     }
 }
-// exports.getUsers = async (req, res) => {
-//     try {
-//         let { page } = req.query
-//         if (page) {
-//             page = parseInt(page)
-//         }
-//         const users = await User.find()
-//         if (users.length === 0) {
-//             return res.send(JSON.stringify({
-//                 page: 0,
-//                 results: [],
-//                 pageSize: 0,
-//             }))
-//         }
-//         const total_pages = Math.ceil(users.length / resultPerPage);
-//         if (page > total_pages) {
-//             return res.send(JSON.stringify({
-//                 errors: `page must be less than or equal to ${total_pages}`,
-//                 success: false
-//             }));
-//         }
-//         const results = paging(users, resultPerPage, page)
-//         return res.send(JSON.stringify({
-//             page: page ? page : 1,
-//             results: results,
-//             total_pages: total_pages
-//         }))
-//     } catch (error) {
-//         return res.status(500).send(JSON.stringify({
-//             message: "Server Error",
-//             success: false
-//         }))
-//     }
-// }
 
 exports.disableUser = async (req, res) => {
     try {
@@ -160,13 +123,13 @@ exports.enableUser = async (req, res) => {
 
 exports.getNumberUsers = async (req, res) => {
     try {
-        const usersCount = await User.find({ isDisable: false }).count()
-        if (!usersCount) {
-            return res.status(400).send(JSON.stringify({
-                message: "Cannot get number users  ! ",
-                success: false
-            }))
-        }
+        const usersCount = await User.find({
+            $and: [
+                { isDisable: false },
+                { isAdmin: false },
+                { isCounselor: false },
+            ]
+        }).count()
         return res.json({
             totalUser: usersCount
         })

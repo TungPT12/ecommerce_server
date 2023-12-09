@@ -38,7 +38,7 @@ const app = express();
 app.use(publicPathStatic)
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://eccomerce-admin.netlify.app', 'https://tung-store.netlify.app'],
     credentials: true
 }));
 

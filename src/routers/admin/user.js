@@ -5,7 +5,7 @@ const router = express.Router();
 
 // router.post('/category', verifyAdminToken, userController.createCategory)
 router.get('/users', verifyAdminToken, userController.getUsers)
-// router.get('/category/:id', verifyAdminToken, userController.getCategoryById)
+router.get('/user/count', verifyAdminToken, userController.getNumberUsers)
 // router.put('/category/:id', verifyAdminToken, userController.updateCategoryById)
 // router.delete('/category/:id', verifyAdminToken, userController.deleteCategory)
 

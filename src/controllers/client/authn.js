@@ -76,7 +76,8 @@ exports.signup = async (req, res) => {
             isCounselor: false,
             avatar: 'https://ss-images.saostar.vn/wp700/pc/1613810558698/Facebook-Avatar_3.png',
             cart: {
-                items: []
+                items: [],
+                totalQuantity: 0,
             },
             isDisable: false,
         })

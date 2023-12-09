@@ -129,7 +129,9 @@ exports.getOrders = async (req, res) => {
                 success: false
             }))
         }
-        const orders = await Order.find();
+        const orders = await Order.find({
+            user: userId,
+        });
         return res.send(JSON.stringify({
             results: orders
         }))

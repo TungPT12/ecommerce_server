@@ -35,7 +35,6 @@ exports.isAccessToken = async (req, res) => {
 
 exports.signin = async (req, res) => {
     try {
-        console.log("asd")
         const { email, password } = req.body;
         let user = await User.findOne({
             email: email,
