@@ -11,6 +11,7 @@ const srcPath = require('./utils/path');
 
 // router upload images
 const uploadImageRouter = require('./routers/uploadImage')
+const chatRouter = require('./routers/chat')
 
 // router admin
 const authnRouterAdmin = require('./routers/admin/authn')
@@ -54,21 +55,22 @@ app.use(session({
 
 
 
-app.use('/api', uploadImageRouter)
+app.use('/api', uploadImageRouter);
+app.use('/api', chatRouter);
 
 // admin api
-app.use('/api/admin', authnRouterAdmin)
-app.use('/api/admin', categoryRouterAdmin)
-app.use('/api/admin', productRouterAdmin)
-app.use('/api/admin', userRouterAdmin)
-app.use('/api/admin', orderRouterAdmin)
+app.use('/api/admin', authnRouterAdmin);
+app.use('/api/admin', categoryRouterAdmin);
+app.use('/api/admin', productRouterAdmin);
+app.use('/api/admin', userRouterAdmin);
+app.use('/api/admin', orderRouterAdmin);
 
 // client
-app.use('/api', authnRouter)
-app.use('/api', productRouter)
-app.use('/api', categoryRouter)
-app.use('/api', cartRouter)
-app.use('/api', orderRouter)
+app.use('/api', authnRouter);
+app.use('/api', productRouter);
+app.use('/api', categoryRouter);
+app.use('/api', cartRouter);
+app.use('/api', orderRouter);
 
 
 const runningServer = () => {
