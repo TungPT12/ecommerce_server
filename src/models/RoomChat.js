@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const roomChatSchema = new Schema({
-    message: [
+    messages: [
         {
             message: {
                 type: String,

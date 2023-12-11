@@ -7,16 +7,23 @@ exports.sendMessage = async (req, res) => {
         const messageInfo = {
             message: message,
             isClient: isClient,
-            date: new Date(),
+            time: new Date(),
         }
-        io.getIO().emit(roomId, messageInfo)
-        return res.json({
-            messageInfo: messageInfo,
-            roomId: roomId
-        })
+
+        const roomChat = await RoomChat.findById(roomId);
+        roomChat.messages.push(messageInfo);
+        const roomChatSave = await roomChat.save();
+        if (roomChatSave) {
+            io.getIO().emit(roomId, messageInfo)
+            return res.json({
+                messageInfo: messageInfo,
+                roomId: roomId
+            })
+        }
+
     } catch (error) {
         return res.status(500).send(JSON.stringify({
-            message: "Server Error",
+            message: error.message,
             success: false
         }))
     }
