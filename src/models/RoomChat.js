@@ -19,10 +19,11 @@ const roomChatSchema = new Schema({
             }
         }
     ],
-    // client: {
-    //     type: Schema.Types.ObjectId,
-    //     require: true
-    // },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        require: true
+    },
 })
 
 module.exports = mongoose.model('RoomChat', roomChatSchema)

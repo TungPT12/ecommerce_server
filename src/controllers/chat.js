@@ -27,12 +27,25 @@ exports.createRoom = async (req, res) => {
         const { userId } = req.body;
         const roomChat = new RoomChat({
             message: [],
-            client: userId,
+            user: userId,
         });
-        io.getIO().emit('newRooms', roomChatCreated);
+        // io.getIO().emit('newRooms', roomChatCreated);
         const roomChatCreated = await roomChat.save();
         return res.json(roomChatCreated);
     } catch (error) {
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false,
+        }));
+    }
+}
+
+exports.getRoomsChat = async (req, res) => {
+    try {
+        const rooms = await RoomChat.find();
+        return res.json(rooms);
+    } catch (error) {
+        console.log(error.message)
         return res.status(500).send(JSON.stringify({
             message: "Server Error",
             success: false,
