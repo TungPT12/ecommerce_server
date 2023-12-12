@@ -86,7 +86,6 @@ const runningServer = () => {
     });
 
     socketIO.getIO().on('connection', (socket) => {
-        console.log('connected')
     })
 }
 

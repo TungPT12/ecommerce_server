@@ -22,6 +22,7 @@ exports.sendMessage = async (req, res) => {
         }
 
     } catch (error) {
+        console.log(error)
         return res.status(500).send(JSON.stringify({
             message: error.message,
             success: false
@@ -32,6 +33,12 @@ exports.sendMessage = async (req, res) => {
 exports.createRoom = async (req, res) => {
     try {
         const { userId } = req.body;
+        const room = await RoomChat.findOne({
+            user: userId
+        })
+        if (room) {
+            return res.json(room);
+        }
         const roomChat = new RoomChat({
             message: [],
             user: userId,
@@ -40,6 +47,8 @@ exports.createRoom = async (req, res) => {
         const roomChatCreated = await roomChat.save();
         return res.json(roomChatCreated);
     } catch (error) {
+        console.log(error)
+
         return res.status(500).send(JSON.stringify({
             message: "Server Error",
             success: false,
@@ -60,3 +69,36 @@ exports.getRoomsChat = async (req, res) => {
     }
 }
 
+
+exports.getRoomChat = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = await RoomChat.findOne({
+            _id: id
+        });
+        return res.json(room);
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false,
+        }));
+    }
+}
+
+exports.getRoomChatByUserId = async (req, res) => {
+    try {
+        const { userId, roomId } = req.body;
+        const room = await RoomChat.findOne({
+            _id: roomId,
+            user: userId
+        });
+        return res.json(room);
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false,
+        }));
+    }
+}

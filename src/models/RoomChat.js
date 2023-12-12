@@ -22,7 +22,7 @@ const roomChatSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        require: true
+        required: true
     },
 })
 
