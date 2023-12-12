@@ -43,8 +43,8 @@ exports.createRoom = async (req, res) => {
             message: [],
             user: userId,
         });
-        // io.getIO().emit('newRooms', roomChatCreated);
         const roomChatCreated = await roomChat.save();
+        io.getIO().emit('newRooms', roomChatCreated);
         return res.json(roomChatCreated);
     } catch (error) {
         console.log(error)
@@ -94,6 +94,30 @@ exports.getRoomChatByUserId = async (req, res) => {
             user: userId
         });
         return res.json(room);
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).send(JSON.stringify({
+            message: "Server Error",
+            success: false,
+        }));
+    }
+}
+
+exports.destroyRoomChat = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = await RoomChat.findById(id);
+        if (room) {
+            const roomDeleted = await RoomChat.deleteOne({ _id: id })
+            if (roomDeleted.deletedCount > 0) {
+                io.getIO().emit('deleteRoomChat', id)
+                return res.sendStatus(200);
+            }
+        }
+        return res.status(400).send(JSON.stringify({
+            message: "Cannot delete room",
+            success: false
+        }))
     } catch (error) {
         console.log(error.message)
         return res.status(500).send(JSON.stringify({

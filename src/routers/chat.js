@@ -9,5 +9,6 @@ router.post('/createRoomChat', chatController.createRoom)
 router.get('/getRoomsChat', chatController.getRoomsChat)
 router.get('/room/:id', chatController.getRoomChat)
 router.post('/room-chat-user', chatController.getRoomChatByUserId)
+router.delete('/room-chat/:id', chatController.destroyRoomChat)
 
 module.exports = router;
