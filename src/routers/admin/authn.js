@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('/signin', authnController.signin);
 router.post('/access-token', authnController.isAccessToken);
-// router.post('/logout', authnController.logout);
+router.post('/logout', authnController.logout);
 
 module.exports = router;

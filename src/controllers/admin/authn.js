@@ -14,7 +14,7 @@ exports.isAccessToken = async (req, res) => {
         const decoded = jwt.verify(token, getKeyEnvironmentVariable('SECRET_KEY'));
         const userId = decoded._id;
         let user = await User.findOne({ _id: userId }).select('-cart -password')
-        if (user.isAdmin) {
+        if (user.isAdmin || user.isCounselor) {
             return res.send(JSON.stringify({
                 ...user._doc,
                 token: token,
@@ -55,10 +55,11 @@ exports.signin = async (req, res) => {
             }))
         }
 
-        if (user.isAdmin) {
+        if (user.isAdmin || user.isCounselor) {
             const token = jwt.sign({
                 _id: user._id,
-                isAdmin: user.isAdmin
+                isAdmin: user.isAdmin,
+                isCounselor: user.isCounselor
             }, getKeyEnvironmentVariable('SECRET_KEY'), { expiresIn: '1d' });
 
             req.session.token = token;
@@ -88,20 +89,20 @@ exports.signin = async (req, res) => {
     }
 }
 
-// exports.logout = async (req, res) => {
-//     try {
-//         req.session.destroy((error) => {
-//             console.log(error)
-//         })
-//         return res.status(200).send(JSON.stringify({
-//             success: true
-//         }))
-//     } catch (error) {
-//         req.session.destroy((error) => {
-//             console.log(error)
-//         })
-//         return res.status(403).send(JSON.stringify({
-//             message: 'UnAuthorization'
-//         }));
-//     }
-// }
+exports.logout = async (req, res) => {
+    try {
+        req.session.destroy((error) => {
+            console.log(error)
+        })
+        return res.status(200).send(JSON.stringify({
+            success: true
+        }))
+    } catch (error) {
+        req.session.destroy((error) => {
+            console.log(error)
+        })
+        return res.status(403).send(JSON.stringify({
+            message: 'UnAuthorization'
+        }));
+    }
+}

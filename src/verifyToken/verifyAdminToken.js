@@ -11,7 +11,7 @@ exports.verifyAdminToken = (req, res, next) => {
             }));
         }
         const decoded = jsonwebtoken.verify(token, getKeyEnvironmentVariable('SECRET_KEY'));
-        if (!decoded.isAdmin) {
+        if (!decoded.isAdmin && !decoded.isCounselor) {
             return res.status(403).send(JSON.stringify({
                 message: 'Not permission'
             }));
