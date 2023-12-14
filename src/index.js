@@ -53,16 +53,16 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: store,
-    // cookie: {
-    //     // httpOnly: false,
-    //     // secure: true,
-    //     maxAge: 1000 * 60 * 60 * 24 * 7,
-    // }
     cookie: {
-        httpOnly: true,
-        secure: true,
+        // httpOnly: false,
+        // secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     }
+    // cookie: {
+    //     httpOnly: true,
+    //     secure: true,
+    //     maxAge: 1000 * 60 * 60 * 24 * 7,
+    // }
 }))
 
 
