@@ -44,7 +44,6 @@ app.use(cors({
         'http://localhost:3001',
         'https://eccomerce-admin.netlify.app',
         'https://tung-store.netlify.app',
-        'https://ecommerce-server-wd48.onrender.com',
     ],
     credentials: true
 }));
@@ -55,6 +54,7 @@ app.use(session({
     saveUninitialized: false,
     store: store,
     cookie: {
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     }
 }))
